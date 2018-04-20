@@ -14,7 +14,43 @@ import java.net.Socket;
  */
 public class SocketCommunicator 
 {
-
+//Music Network Server
+    public void signUp(Member member) {
+        
+        try{
+            Socket serverConnection = new Socket("localhost",2222);
+            
+            ObjectOutputStream OutputStream = new ObjectOutputStream(serverConnection.getOutputStream());
+            OutputStream.writeObject(member);
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
+    public void singOut (Member member){
+        try{
+            Socket serverConnection = new Socket("localhost",3333);
+            
+            ObjectOutputStream OutputStream = new ObjectOutputStream(serverConnection.getOutputStream());
+            OutputStream.writeObject(member);
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
+    
+    public void logIn(){  
+    }
+    public void postSend(){
+    }
+    public void postReceive(){
+    }
+    public void songSend(){
+    }
+    public void songReceive(){
+    }
+    
+    
 //Chat Server    
     public void acceptChat()
     {
@@ -38,6 +74,17 @@ public class SocketCommunicator
             System.out.println("Network Error:" + E.getMessage());
         }
         
+    }
+    
+    public void writeToConsole(){
+        try{
+            Socket s = new Socket("localhost",5555);
+            ObjectOutputStream stream = new ObjectOutputStream(s.getOutputStream());
+            
+            stream.writeObject(new String("hey"));
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
     }
               
 }

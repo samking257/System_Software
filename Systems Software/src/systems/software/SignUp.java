@@ -5,6 +5,11 @@
  */
 package systems.software;
 
+import java.util.ArrayList;
+import java.util.Date;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
 /**
  *
  * @author Sam King
@@ -30,20 +35,29 @@ public class SignUp extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jPasswordField1 = new javax.swing.JPasswordField();
+        pwTextFeild = new javax.swing.JPasswordField();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
+        signUpBtn = new javax.swing.JButton();
+        cancleBtn = new javax.swing.JButton();
+        unTextFeild = new javax.swing.JTextField();
+        DD = new javax.swing.JTextField();
+        pobTextFeild = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList<>();
+        genreComboBox = new javax.swing.JComboBox<>();
+        EXIT = new javax.swing.JButton();
+        CLEAR = new javax.swing.JButton();
+        MM = new javax.swing.JTextField();
+        YYYY = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
+        musicList = new java.awt.List();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                MMPressed(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
         jLabel1.setText("Username");
@@ -54,8 +68,12 @@ public class SignUp extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
         jLabel3.setText("Place of Birth");
 
-        jPasswordField1.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
-        jPasswordField1.setText("jPasswordField1");
+        pwTextFeild.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
+        pwTextFeild.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pwTextFeildActionPerformed(evt);
+            }
+        });
 
         jLabel4.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
         jLabel4.setText("Password");
@@ -63,88 +81,182 @@ public class SignUp extends javax.swing.JFrame {
         jLabel5.setFont(new java.awt.Font("Georgia Pro Black", 0, 36)); // NOI18N
         jLabel5.setText("Signing up");
 
-        jButton1.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
-        jButton1.setText("Sign up");
+        signUpBtn.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
+        signUpBtn.setText("Sign up");
+        signUpBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                signUpBtnActionPerformed(evt);
+            }
+        });
+
+        cancleBtn.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
+        cancleBtn.setText("Cancel");
+        cancleBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancleBtnActionPerformed(evt);
+            }
+        });
+
+        unTextFeild.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
+        unTextFeild.setText("Enter Username Here");
+        unTextFeild.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                UNCllicked(evt);
+            }
+        });
+        unTextFeild.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                unTextFeildActionPerformed(evt);
+            }
+        });
+
+        DD.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
+        DD.setText("DD");
+        DD.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                DDClicked(evt);
+            }
+        });
+
+        pobTextFeild.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
+        pobTextFeild.setText("Enter PoB Here");
+        pobTextFeild.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                PoBClicked(evt);
+            }
+        });
+        pobTextFeild.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pobTextFeildActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
+        jLabel6.setText("Music Genre");
+
+        genreComboBox.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
+        genreComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Rock", "Indie", "Drum and Bass", "Country", "Pop", "Classical", "Jazz", "Metal", "Funk", "House", " " }));
+        genreComboBox.setToolTipText("");
+
+        EXIT.setText("EXIT");
+        EXIT.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                EXITActionPerformed(evt);
+            }
+        });
+
+        CLEAR.setText("RESET");
+        CLEAR.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CLEARActionPerformed(evt);
+            }
+        });
+
+        MM.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
+        MM.setText("MM");
+        MM.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                MMMouseClicked(evt);
+            }
+        });
+        MM.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MMActionPerformed(evt);
+            }
+        });
+
+        YYYY.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
+        YYYY.setText("YYYY");
+        YYYY.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                YYYYMouseClicked(evt);
+            }
+        });
+        YYYY.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                YYYYActionPerformed(evt);
+            }
+        });
+
+        jButton1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jButton1.setText("Add");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
 
-        jButton2.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
-        jButton2.setText("Cancel");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        musicList.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                musicListActionPerformed(evt);
             }
         });
-
-        jTextField1.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
-        jTextField1.setText("jTextField1");
-
-        jTextField2.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
-        jTextField2.setText("jTextField2");
-
-        jTextField3.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
-        jTextField3.setText("jTextField3");
-
-        jLabel6.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
-        jLabel6.setText("Music Genre");
-
-        jComboBox1.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        jList1.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
-        jList1.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
-        jScrollPane1.setViewportView(jList1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel1))
+                .addGap(6, 6, 6)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(244, 244, 244)
-                        .addComponent(jLabel5))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(35, 35, 35)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel1))
-                        .addGap(18, 18, 18)
+                        .addGap(37, 37, 37)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButton1)
+                                .addGap(84, 84, 84)
+                                .addComponent(jLabel5)
+                                .addGap(140, 140, 140)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(CLEAR, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(EXIT, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(signUpBtn)
                                 .addGap(106, 106, 106)
-                                .addComponent(jButton2))
+                                .addComponent(cancleBtn)))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(pobTextFeild, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(pwTextFeild, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addComponent(DD, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(MM, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(YYYY, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jPasswordField1)
-                                    .addComponent(jTextField3)
-                                    .addComponent(jTextField2)
-                                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(30, 30, 30)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel6)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(jScrollPane1))))))
-                .addContainerGap(41, Short.MAX_VALUE))
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(unTextFeild, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(10, 10, 10)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel6)
+                                .addGap(18, 18, 18)
+                                .addComponent(genreComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(musicList, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(37, 37, 37)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(110, 110, 110))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(39, 39, 39)
-                .addComponent(jLabel5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 66, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(39, 39, 39)
+                        .addComponent(jLabel5))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(52, 52, 52)
+                        .addComponent(EXIT)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(CLEAR)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
@@ -156,39 +268,240 @@ public class SignUp extends javax.swing.JFrame {
                         .addComponent(jLabel4))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(unTextFeild, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(jLabel6)
-                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(genreComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(DD, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(MM, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(YYYY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(20, 20, 20)
-                                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(pobTextFeild, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(23, 23, 23)
-                                .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(37, 37, 37)
+                                .addComponent(pwTextFeild, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(musicList, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(30, 30, 30)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButton1)
-                            .addComponent(jButton2))
-                        .addGap(24, 24, 24))))
+                            .addComponent(signUpBtn)
+                            .addComponent(cancleBtn))))
+                .addGap(24, 24, 24))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    ArrayList <String> prefMusic = new ArrayList<>();
+    private void signUpBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signUpBtnActionPerformed
         // TODO add your handling code here:
+        final int NUM_FIELDS = 7;
+        int numCorrect = 0;
+        String errorMessage = "";
+
+        String username = "";
+        int dateDay = 0;
+        int dateMonth = 0;
+        int dateYear = 0;
+        String password = "";
+        String birthplace = "";
+        
+       //validate username
+       if(unTextFeild.getText().length() < 2 || username.length() > 25){
+       errorMessage = errorMessage.concat("Username is to long/short. \n");
+       } else{
+           numCorrect++;
+           username = unTextFeild.getText();
+       }
+       
+   //validate Date of birth
+       if(DD.getText().equalsIgnoreCase("DD") || DD.getText().isEmpty()){
+       errorMessage = errorMessage.concat("Day feild is empty. \n");
+    } else {
+          //data is present
+          try {//convert to int
+              int dd = Integer.parseInt(DD.getText());
+              if(dd <= 0 || dd>30){
+                  errorMessage = errorMessage.concat("Invalid day. \n");
+              } else {//all good
+                  dateDay = dd;
+                  numCorrect++;
+              }
+          } catch (NumberFormatException e){
+              //not a number
+              errorMessage = errorMessage.concat("Day is not a vald number. \n");
+          }
+       }
+       
+   //validate month of birth
+       if(MM.getText().equalsIgnoreCase("MM") || MM.getText().isEmpty()){
+       errorMessage = errorMessage.concat("Month feild is empty. \n");
+    } else {
+          //data is present
+          try {//convert to int
+              int mm = Integer.parseInt(MM.getText());
+              if(mm <= 0 || mm>30){
+                  errorMessage = errorMessage.concat("Invalid month. \n");
+              } else {
+                  dateMonth = mm;
+                  numCorrect++;
+              }
+          } catch (NumberFormatException e){
+              //not a number
+              errorMessage = errorMessage.concat("Month is not a valid number. \n");
+          }
+       }
+       
+       
+       //validate year of birth
+       if(YYYY.getText().equalsIgnoreCase("YYYY") || YYYY.getText().isEmpty()){
+       errorMessage = errorMessage.concat("Year feild is empty. \n");
+    } else {
+          //data is present
+          try {//convert to int
+              int yyyy = Integer.parseInt(MM.getText());
+              if(yyyy <= 0 || yyyy>30){
+                  errorMessage = errorMessage.concat("Invalid Year. \n");
+              } else {
+                  dateYear = yyyy;
+                  numCorrect++;
+              }
+          } catch (NumberFormatException e){
+              //not a real number
+              errorMessage = errorMessage.concat("Year is not a valid number. \n");
+          }
+       }
+       
+       String date = DD.getText() + "/" + MM.getText() + "/" + YYYY.getText();
+       
+       
+       //validate Birthplace
+       if(pobTextFeild.getText().length() < 2 || pobTextFeild.getText().length() > 30){
+        errorMessage = errorMessage.concat("Place of birth is to long/short. \n");
+       } else{
+           numCorrect++;
+           birthplace = pobTextFeild.getText();
+       }
+       //validate password
+       if(pwTextFeild.getText().length() < 2 || pwTextFeild.getText().length() > 25){
+       errorMessage = errorMessage.concat("Password is to long/short. \n");
+       } else{
+           numCorrect++;
+           password = pwTextFeild.getText();
+       }
+       
+       if(prefMusic.size() < 1){
+          errorMessage = errorMessage.concat("You must add music \n"); 
+       } else{
+           numCorrect++;
+       }
+       
+       if(numCorrect < NUM_FIELDS)
+       {    
+          JOptionPane.showMessageDialog(new JPanel(), errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
+       }else{
+           
+       
+       
+        Member newHomie = new Member();
+        newHomie.userName = username;
+        newHomie.dateOfBirth = date;
+        newHomie.passWord = password;
+        newHomie.placeOfBirth = birthplace;
+        newHomie.prefMusic = prefMusic;
+        new SocketCommunicator().signUp(newHomie);
+        
+        JOptionPane.showMessageDialog(new JPanel(), "Profile Created! :)", "Info", JOptionPane.INFORMATION_MESSAGE);
+                
+        
         this.dispose();
         new Home().setVisible(true);
+    }
+    }//GEN-LAST:event_signUpBtnActionPerformed
+
+    private void cancleBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancleBtnActionPerformed
+        this.dispose();
+        new UI().setVisible(true);
+    }//GEN-LAST:event_cancleBtnActionPerformed
+
+    private void unTextFeildActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_unTextFeildActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_unTextFeildActionPerformed
+
+    private void pobTextFeildActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pobTextFeildActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_pobTextFeildActionPerformed
+
+    private void EXITActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EXITActionPerformed
+      System.exit(0);
+    }//GEN-LAST:event_EXITActionPerformed
+
+    private void CLEARActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CLEARActionPerformed
+        pobTextFeild.setText("  Enter date of birth here");
+        unTextFeild.setText(" Enter username here");
+        DD.setText("DD");
+        MM.setText("MM");
+        YYYY.setText("YYYY");
+        pwTextFeild.setText("");
+    }//GEN-LAST:event_CLEARActionPerformed
+
+    private void pwTextFeildActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pwTextFeildActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_pwTextFeildActionPerformed
+
+    private void PoBClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PoBClicked
+        // TODO add your handling code here:
+        pobTextFeild.setText("");
+    }//GEN-LAST:event_PoBClicked
+
+    private void DDClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DDClicked
+        // TODO add your handling code here:
+        DD.setText("");
+    }//GEN-LAST:event_DDClicked
+
+    private void UNCllicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_UNCllicked
+        // TODO add your handling code here:
+        unTextFeild.setText("");
+    }//GEN-LAST:event_UNCllicked
+
+    private void MMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MMActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_MMActionPerformed
+
+    private void YYYYActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_YYYYActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_YYYYActionPerformed
+
+    private void YYYYMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_YYYYMouseClicked
+        // TODO add your handling code here:
+        YYYY.setText("");
+    }//GEN-LAST:event_YYYYMouseClicked
+
+    private void MMPressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MMPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_MMPressed
+
+    private void MMMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MMMouseClicked
+        // TODO add your handling code here:
+        MM.setText("");
+    }//GEN-LAST:event_MMMouseClicked
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        if(genreComboBox.getSelectedIndex()!=-1){
+            String item = genreComboBox.getSelectedItem().toString();
+            prefMusic.add(item);
+            musicList.add(item);
+            
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-       
-        this.dispose();
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void musicListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_musicListActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_musicListActionPerformed
 
     /**
      * @param args the command line arguments
@@ -226,20 +539,24 @@ public class SignUp extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton CLEAR;
+    private javax.swing.JTextField DD;
+    private javax.swing.JButton EXIT;
+    private javax.swing.JTextField MM;
+    private javax.swing.JTextField YYYY;
+    private javax.swing.JButton cancleBtn;
+    private javax.swing.JComboBox<String> genreComboBox;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JList<String> jList1;
-    private javax.swing.JPasswordField jPasswordField1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
+    private java.awt.List musicList;
+    private javax.swing.JTextField pobTextFeild;
+    private javax.swing.JPasswordField pwTextFeild;
+    private javax.swing.JButton signUpBtn;
+    private javax.swing.JTextField unTextFeild;
     // End of variables declaration//GEN-END:variables
 }
