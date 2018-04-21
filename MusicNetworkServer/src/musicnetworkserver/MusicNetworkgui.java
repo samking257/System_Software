@@ -5,12 +5,16 @@
  */
 package musicnetworkserver;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import systems.software.Member;
 import systems.software.Posts;
+import systems.software.SocketCommunicator;
 import systems.software.Songs;
 
 /**
@@ -35,9 +39,9 @@ public class MusicNetworkgui extends javax.swing.JFrame {
     void Begin(){
         new Thread (this::signUp).start();
         
-        new Thread (this::logIn).start();
-        
         new Thread (this::postSend).start();
+        
+        new Thread(this::readUser).start();
         
         new Thread (this::postReceive).start();
         
@@ -48,6 +52,8 @@ public class MusicNetworkgui extends javax.swing.JFrame {
         new Thread (this::songSend).start();
         
         new Thread (this::songReceive).start();
+        
+        new Thread (this::onlinePepes).start();
                 
     }
 
@@ -62,6 +68,10 @@ public class MusicNetworkgui extends javax.swing.JFrame {
             Member receiveMember = (Member)inputStream.readObject();
             
             member.add(receiveMember);
+            
+            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("UserDatabase/" + receiveMember.userName + ".txt"));
+            out.writeObject(receiveMember);
+                   socket.close();  
         }
         catch(Exception e){
             System.out.println(e.getMessage());
@@ -69,7 +79,68 @@ public class MusicNetworkgui extends javax.swing.JFrame {
                 
         }
     }
-    private void logIn(){  
+    
+    
+    private void signOut() {
+        while(true){
+        try{
+            ServerSocket socket = new ServerSocket(3333);
+            Socket client = socket.accept();
+            
+            ObjectInputStream inputStream = new ObjectInputStream(client.getInputStream());
+            Member receiveMember = (Member)inputStream.readObject();
+            
+            member.remove(receiveMember);
+            socket.close();
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+                
+        }
+    }
+    public void readUser(){
+        while (true){
+            try{
+            ServerSocket socket = new ServerSocket(4444);
+            Socket client = socket.accept();
+            
+            ObjectInputStream getUsername = new ObjectInputStream(client.getInputStream());
+            String Username = (String)getUsername.readObject();
+            
+            ObjectInputStream is = new ObjectInputStream(new FileInputStream("UserDatabase/" + Username + ".txt"));
+            Member M = (Member)is.readObject();
+            
+            ObjectOutputStream os = new ObjectOutputStream(client.getOutputStream());
+            os.writeObject(M);
+            
+            socket.close();
+            }catch (Exception e){
+            System.out.println(e.getMessage());
+            }
+        }
+        
+    }
+    
+    
+    
+    private void onlinePepes(){
+        while(true){
+        try{
+            ServerSocket socket = new ServerSocket(6666);
+            Socket client = socket.accept();
+            
+            ObjectInputStream inputStream = new ObjectInputStream(client.getInputStream());
+            String receiveReq = (String)inputStream.readObject();
+            ObjectOutputStream outputStream = new ObjectOutputStream (client.getOutputStream());
+            outputStream.writeObject(member);
+            socket.close();
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+                
+        }
     }
     private void postSend(){
     }
@@ -92,31 +163,65 @@ public class MusicNetworkgui extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
+        Refresh = new javax.swing.JButton();
+        onlinePeeps = new java.awt.List();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setText("button");
+        Refresh.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        Refresh.setText("Refresh");
+        Refresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                RefreshActionPerformed(evt);
+            }
+        });
+
+        onlinePeeps.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        jLabel1.setText("Online pepes:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(180, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addGap(155, 155, 155))
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(38, 38, 38)
+                        .addComponent(onlinePeeps, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(29, 29, 29)
+                        .addComponent(Refresh, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(65, 65, 65)
+                        .addComponent(jLabel1)))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(156, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addGap(121, 121, 121))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap(37, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(onlinePeeps, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(39, 39, 39))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(Refresh, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(108, 108, 108))))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void RefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefreshActionPerformed
+        onlinePeeps.removeAll();
+        for(Member m: member){
+            onlinePeeps.add(m.userName);
+        }      
+    }//GEN-LAST:event_RefreshActionPerformed
 
     /**
      * @param args the command line arguments
@@ -154,6 +259,8 @@ public class MusicNetworkgui extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton Refresh;
+    private javax.swing.JLabel jLabel1;
+    private java.awt.List onlinePeeps;
     // End of variables declaration//GEN-END:variables
 }
