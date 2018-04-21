@@ -5,8 +5,10 @@
  */
 package systems.software;
 
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 
 /**
  *
@@ -27,12 +29,53 @@ public class SocketCommunicator
             System.out.println(e.getMessage());
         }
     }
+    
+    public Member getUser(String username){
+        Member returnMember = null;
+    try{
+            Socket serverConnection = new Socket("localhost",4444);
+            
+            ObjectOutputStream OutputStream = new ObjectOutputStream(serverConnection.getOutputStream());
+            OutputStream.writeObject(username);
+            
+            ObjectInputStream in = new ObjectInputStream(serverConnection.getInputStream());
+            returnMember = (Member)in.readObject();
+            return returnMember;
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+            return returnMember;
+        }
+    }
+            
+     public ArrayList<Member> onlinePepes(){
+         ArrayList<Member> returnArray = new ArrayList<>();
+         try{
+            Socket serverConnection = new Socket("localhost",6666);
+            
+            ObjectOutputStream OutputStream = new ObjectOutputStream(serverConnection.getOutputStream());
+            OutputStream.writeObject("");
+            
+            ObjectInputStream In = new ObjectInputStream(serverConnection.getInputStream());
+            returnArray = (ArrayList<Member>)In.readObject();
+            
+            return returnArray;
+         }
+         catch
+             (Exception e){
+            System.out.println(e.getMessage());
+             return returnArray;
+         }
+     }
+    
     public void singOut (Member member){
         try{
             Socket serverConnection = new Socket("localhost",3333);
             
             ObjectOutputStream OutputStream = new ObjectOutputStream(serverConnection.getOutputStream());
             OutputStream.writeObject(member);
+            
+            
         }
         catch(Exception e){
             System.out.println(e.getMessage());
@@ -50,6 +93,16 @@ public class SocketCommunicator
     public void songReceive(){
     }
     
+        public void writeToConsole(){
+        try{
+            Socket s = new Socket("localhost",5555);
+            ObjectOutputStream stream = new ObjectOutputStream(s.getOutputStream());
+            
+            stream.writeObject(new String("hey"));
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
     
 //Chat Server    
     public void acceptChat()
@@ -75,16 +128,6 @@ public class SocketCommunicator
         }
         
     }
-    
-    public void writeToConsole(){
-        try{
-            Socket s = new Socket("localhost",5555);
-            ObjectOutputStream stream = new ObjectOutputStream(s.getOutputStream());
-            
-            stream.writeObject(new String("hey"));
-        }catch(Exception e){
-            System.out.println(e.getMessage());
-        }
-    }
+   
               
 }

@@ -5,6 +5,11 @@
  */
 package systems.software;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Date;
 import javax.swing.JOptionPane;
@@ -43,8 +48,8 @@ public class SignUp extends javax.swing.JFrame {
         unTextFeild = new javax.swing.JTextField();
         DD = new javax.swing.JTextField();
         pobTextFeild = new javax.swing.JTextField();
-        jLabel6 = new javax.swing.JLabel();
         genreComboBox = new javax.swing.JComboBox<>();
+        jLabel6 = new javax.swing.JLabel();
         EXIT = new javax.swing.JButton();
         CLEAR = new javax.swing.JButton();
         MM = new javax.swing.JTextField();
@@ -131,12 +136,17 @@ public class SignUp extends javax.swing.JFrame {
             }
         });
 
-        jLabel6.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
-        jLabel6.setText("Music Genre");
-
         genreComboBox.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
         genreComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Rock", "Indie", "Drum and Bass", "Country", "Pop", "Classical", "Jazz", "Metal", "Funk", "House", " " }));
         genreComboBox.setToolTipText("");
+        genreComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                genreComboBoxActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
+        jLabel6.setText("Music Genre");
 
         EXIT.setText("EXIT");
         EXIT.addActionListener(new java.awt.event.ActionListener() {
@@ -209,17 +219,14 @@ public class SignUp extends javax.swing.JFrame {
                         .addGap(37, 37, 37)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(84, 84, 84)
-                                .addComponent(jLabel5)
-                                .addGap(140, 140, 140)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(CLEAR, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(EXIT, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                            .addGroup(layout.createSequentialGroup()
                                 .addComponent(signUpBtn)
                                 .addGap(106, 106, 106)
-                                .addComponent(cancleBtn)))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(cancleBtn))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(84, 84, 84)
+                                .addComponent(jLabel5)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(EXIT, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(pobTextFeild, javax.swing.GroupLayout.Alignment.LEADING)
@@ -231,7 +238,7 @@ public class SignUp extends javax.swing.JFrame {
                                 .addGap(18, 18, 18)
                                 .addComponent(YYYY, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addGap(0, 3, Short.MAX_VALUE)
                                 .addComponent(unTextFeild, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(10, 10, 10)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -239,10 +246,11 @@ public class SignUp extends javax.swing.JFrame {
                                 .addComponent(jLabel6)
                                 .addGap(18, 18, 18)
                                 .addComponent(genreComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(musicList, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(37, 37, 37)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(110, 110, 110))))
+                            .addComponent(musicList, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(CLEAR, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(52, 52, 52)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(110, 110, 110))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -354,13 +362,10 @@ public class SignUp extends javax.swing.JFrame {
               errorMessage = errorMessage.concat("Month is not a valid number. \n");
           }
        }
-       
-       
        //validate year of birth
        if(YYYY.getText().equalsIgnoreCase("YYYY") || YYYY.getText().isEmpty()){
        errorMessage = errorMessage.concat("Year feild is empty. \n");
-    } else {
-          //data is present
+    } else {//data is present
           try {//convert to int
               int yyyy = Integer.parseInt(MM.getText());
               if(yyyy <= 0 || yyyy>30){
@@ -369,12 +374,10 @@ public class SignUp extends javax.swing.JFrame {
                   dateYear = yyyy;
                   numCorrect++;
               }
-          } catch (NumberFormatException e){
-              //not a real number
+          } catch (NumberFormatException e){//not a real number
               errorMessage = errorMessage.concat("Year is not a valid number. \n");
           }
        }
-       
        String date = DD.getText() + "/" + MM.getText() + "/" + YYYY.getText();
        
        
@@ -405,7 +408,7 @@ public class SignUp extends javax.swing.JFrame {
        }else{
            
        
-       
+       //fill in the homies information
         Member newHomie = new Member();
         newHomie.userName = username;
         newHomie.dateOfBirth = date;
@@ -414,7 +417,7 @@ public class SignUp extends javax.swing.JFrame {
         newHomie.prefMusic = prefMusic;
         new SocketCommunicator().signUp(newHomie);
         
-        JOptionPane.showMessageDialog(new JPanel(), "Profile Created! :)", "Info", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(new JPanel(), "Profile Created!", "Info", JOptionPane.INFORMATION_MESSAGE);
                 
         
         this.dispose();
@@ -502,6 +505,10 @@ public class SignUp extends javax.swing.JFrame {
     private void musicListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_musicListActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_musicListActionPerformed
+
+    private void genreComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_genreComboBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_genreComboBoxActionPerformed
 
     /**
      * @param args the command line arguments
