@@ -5,8 +5,15 @@
  */
 package systems.software;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -30,6 +37,8 @@ public class SocketCommunicator
         }
     }
     
+    
+    
     public Member getUser(String username){
         Member returnMember = null;
     try{
@@ -47,7 +56,36 @@ public class SocketCommunicator
             return returnMember;
         }
     }
-            
+            //send song thing that takes path and name
+   // make new file with path 
+     //make byte array from that file Files.readAllBytes(myfile.toPath());
+     //writeObject(byteArray)
+     //
+    
+    void sendSong(String fileLocal,String fileName, String clientName){
+        
+        try{
+             Socket serverConnection = new Socket("localhost",6969);
+             
+             File song = new File(fileLocal);// file got
+             byte[] byteArray = new byte [(int) song.length()]; // array size = file size
+             BufferedInputStream bis = new BufferedInputStream(new FileInputStream(song)); // in the buffer
+             bis.read(byteArray,0,byteArray.length); //put the buffer in byte array
+                    
+                OutputStream os = serverConnection.getOutputStream();
+        
+                    DataOutputStream d = new DataOutputStream(os);
+                    d.writeUTF(fileName + "," + clientName); //send name and username to UTF
+                    os.write(byteArray,0,byteArray.length); //create the actual byte array
+                    
+                    os.flush(); //empty os
+                    
+            }catch(Exception e){
+                 System.out.println(e.getMessage());
+           
+            };
+    }
+    
      public ArrayList<Member> onlinePepes(){
          ArrayList<Member> returnArray = new ArrayList<>();
          try{
@@ -67,7 +105,8 @@ public class SocketCommunicator
              return returnArray;
          }
      }
-    
+
+     
     public void singOut (Member member){
         try{
             Socket serverConnection = new Socket("localhost",3333);
@@ -88,10 +127,7 @@ public class SocketCommunicator
     }
     public void postReceive(){
     }
-    public void songSend(){
-    }
-    public void songReceive(){
-    }
+
     
         public void writeToConsole(){
         try{
@@ -128,6 +164,8 @@ public class SocketCommunicator
         }
         
     }
+
+    
    
               
 }

@@ -19,5 +19,6 @@ public class Member implements Serializable {
     public  String dateOfBirth;
     public String placeOfBirth;
     public ArrayList<String> friends = new ArrayList<>();
+    public ArrayList<String> Songs = new ArrayList<>();
     public ArrayList<String> prefMusic = new ArrayList<>();
 }

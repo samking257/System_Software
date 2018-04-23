@@ -421,7 +421,7 @@ public class SignUp extends javax.swing.JFrame {
                 
         
         this.dispose();
-        new Home().setVisible(true);
+        new Music().setVisible(true);
     }
     }//GEN-LAST:event_signUpBtnActionPerformed
 

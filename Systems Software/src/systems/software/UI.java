@@ -24,7 +24,7 @@ public class UI extends javax.swing.JFrame {
         initComponents();
         communicator.writeToConsole();
     }
-String errorMessage = "shits fucked yo";
+String errorMessage = "Login Error";
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -163,21 +163,25 @@ String errorMessage = "shits fucked yo";
     private void Sign_inActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Sign_inActionPerformed
         // TODO add your handling code here:
         
-        Member M = communicator.getUser(EnteredUsername.getText());
+        this.dispose();
+        new Profile("TestPeson").setVisible(true);
+        /*Member M = communicator.getUser(EnteredUsername.getText());
         
         if(M != null)
         {
             if(EnteredPassword.getText().equals(M.passWord))
             {
-                new Profile("TestBoi").setVisible (true);
+                Profile newProfile = new Profile(M.userName);
+                communicator.signUp(M);
                 this.dispose();
+                newProfile.setVisible(true);
                 return;
             }  
             
         }
         JOptionPane.showMessageDialog(new JPanel(), errorMessage, "Error", JOptionPane.ERROR_MESSAGE);
         //output error
-        
+        */
 
     }//GEN-LAST:event_Sign_inActionPerformed
 
