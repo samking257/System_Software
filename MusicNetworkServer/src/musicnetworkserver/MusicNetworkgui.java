@@ -5,8 +5,13 @@
  */
 package musicnetworkserver;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
@@ -26,7 +31,7 @@ public class MusicNetworkgui extends javax.swing.JFrame {
     //globals
     final private ArrayList<Member> member = new ArrayList<>();
     final private ArrayList<Posts> posts = new ArrayList<>();
-    final private ArrayList<Songs> songs = new ArrayList<>();
+    final private ArrayList<songs> allSongs = new ArrayList<>();
     
     
     /**
@@ -51,12 +56,18 @@ public class MusicNetworkgui extends javax.swing.JFrame {
         
         new Thread (this::songSend).start();
         
-        new Thread (this::songReceive).start();
+        new Thread (this::songSend).start();
         
         new Thread (this::onlinePepes).start();
-                
+        
+                new Thread (this::songReceive).start();
     }
 
+    
+    //doanload song(songname, byte[] data]
+    //FileOuputStream songwriter = new FileOutputStream("music/"+songname)
+    
+    
     
     private void signUp() {
         while(true){
@@ -122,7 +133,20 @@ public class MusicNetworkgui extends javax.swing.JFrame {
         
     }
     
-    
+    public Member sendUser(){
+        while(true){
+        try{
+            ServerSocket socket = new ServerSocket(5555);
+            Socket client = socket.accept();
+            
+            socket.close();
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+                
+        }
+    }
     
     private void onlinePepes(){
         while(true){
@@ -132,6 +156,7 @@ public class MusicNetworkgui extends javax.swing.JFrame {
             
             ObjectInputStream inputStream = new ObjectInputStream(client.getInputStream());
             String receiveReq = (String)inputStream.readObject();
+            
             ObjectOutputStream outputStream = new ObjectOutputStream (client.getOutputStream());
             outputStream.writeObject(member);
             socket.close();
@@ -142,6 +167,42 @@ public class MusicNetworkgui extends javax.swing.JFrame {
                 
         }
     }
+    private void songReceive(){
+        while(true){
+        try{
+            ServerSocket socket = new ServerSocket(6969);
+            Socket client = socket.accept();
+
+            byte[] thebyte = new byte[9999999];//make massive []
+            InputStream is = client.getInputStream();
+            DataInputStream d = new DataInputStream(is); //data input transfers
+            
+            String[] infomationArray = d.readUTF().split(","); //seperate
+            String fileName = infomationArray[0];//assign
+            String Uname = infomationArray[1];//assign
+            
+            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("music/"+ fileName)); //puts file in buffer again
+         int count;
+         while((count = client.getInputStream().read(thebyte))>0){
+             bos.write(thebyte,0,count);
+             socket.close();
+            
+         }
+         songs s = new songs();
+         s.Uploader = Uname;
+         s.songPath = fileName;
+         allSongs.add(s);
+           
+            socket.close();
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+                
+        }
+    }
+
+    
     private void postSend(){
     }
     private void postReceive(){
@@ -152,8 +213,7 @@ public class MusicNetworkgui extends javax.swing.JFrame {
     }
     private void songSend(){
     }
-    private void songReceive(){
-    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -180,7 +240,7 @@ public class MusicNetworkgui extends javax.swing.JFrame {
         onlinePeeps.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
-        jLabel1.setText("Online pepes:");
+        jLabel1.setText("Online:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -194,7 +254,7 @@ public class MusicNetworkgui extends javax.swing.JFrame {
                         .addGap(29, 29, 29)
                         .addComponent(Refresh, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(65, 65, 65)
+                        .addGap(96, 96, 96)
                         .addComponent(jLabel1)))
                 .addContainerGap(30, Short.MAX_VALUE))
         );
