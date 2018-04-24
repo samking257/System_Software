@@ -5,53 +5,96 @@
  */
 package systems.software;
 
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
+import java.net.Socket;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 /**
  *
  * @author Sam King
  */
 public class Profile extends javax.swing.JFrame {
-SocketCommunicator talker = new SocketCommunicator();
-public String clientName = null;
+    SocketCommunicator talker = new SocketCommunicator();
+    public String clientName = null;
         /**
      * Creates new form Profile
      */
     public Profile() {
         initComponents();
+        //updateGUI();
     }
 
-     public Profile(String userName) {
+     public Profile(String userName) 
+     {
         initComponents();
+        setTitle("Current Account: " + userName);
         clientName = userName;
-        updateGUI();
-        Runnable r = new Runnable(){
-            public void run(){
-                while (true)
-                {
-                    updateGUI();
-                    try{
-                       Thread.sleep(2000);
-                    } catch(Exception e){
-                        System.out.println(e.getMessage());
-                    }
+        /*
+        Runnable r = new Runnable() {
+         public void run() {
+             while(true)
+             {
+                updateGUI();
+                try{
+                    Thread.sleep(2000);
+                }catch(Exception E){
+                System.out.println("Thread Error:" + E.getMessage());
                 }
-            }
+             }
+         }
         };
-        
-        new Thread(r).start();
 
+     new Thread(r).start();
+     */
     }
      
      void updateGUI(){
-         memberList.removeAll();
-         ArrayList <Member> onlinePeeps = talker.onlinePepes();
-            for(Member m:onlinePeeps){
-                memberList.add(m.userName);//update online list
+        //MemberList
+        memberList.removeAll();
+        ArrayList <Member> AllMembers = talker.onlinePepes();
+            for(Member m:AllMembers){      
+                if(!m.userName.equals(clientName))
+                {
+                    memberList.add(m.userName);//update online list
+                }
             }
-     }
-
-     
+                        
+        //Request List
+        requestList.removeAll();
+        Member M = talker.getUser(clientName);
+        ArrayList <String> Requests = M.friendsRequests;
+            for(String User:Requests){
+                requestList.add(User);
+            }
+        
+        //SelectedFriend List
+        
+        ArrayList <String> friends = M.friends;
+            for(String User:friends){
+                FriendsList.add(User);
+            }
+        
+        
+        if(FriendsList.getSelectedIndex() != -1)
+        {
+            //infoList
+            infoList.removeAll();
+            Member Friend = talker.getUser(FriendsList.getSelectedItem());
+            infoList.add(Friend.dateOfBirth);
+            infoList.add(Friend.placeOfBirth);
+            
+            //songList
+            songList.removeAll();
+            ArrayList <String> friendSongs = Friend.Songs;
+            for(String song:friendSongs){
+                songList.add(song);
+            }
+        }
+        
+     }  
      
      
     /**
@@ -63,6 +106,8 @@ public String clientName = null;
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        Music = new javax.swing.JButton();
+        Profile = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -75,14 +120,29 @@ public String clientName = null;
         logOut = new javax.swing.JButton();
         Chat = new javax.swing.JButton();
         memberList = new java.awt.List();
-        friendList = new java.awt.List();
         songList = new java.awt.List();
         requestList = new java.awt.List();
         infoList = new java.awt.List();
-        musicBtn = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        FriendsList = new java.awt.List();
+        Refresh = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        Music.setFont(new java.awt.Font("Georgia Pro Black", 0, 24)); // NOI18N
+        Music.setText("Music");
+        Music.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MusicActionPerformed(evt);
+            }
+        });
+
+        Profile.setFont(new java.awt.Font("Georgia Pro Black", 0, 24)); // NOI18N
+        Profile.setText("Profile");
+        Profile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ProfileActionPerformed(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Georgia Pro Black", 0, 14)); // NOI18N
         jLabel1.setText("Your Friends");
@@ -112,9 +172,19 @@ public String clientName = null;
 
         Accept.setFont(new java.awt.Font("Georgia Pro Black", 0, 14)); // NOI18N
         Accept.setText("Accept ");
+        Accept.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AcceptActionPerformed(evt);
+            }
+        });
 
         Decline.setFont(new java.awt.Font("Georgia Pro Black", 0, 14)); // NOI18N
         Decline.setText("Decline");
+        Decline.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                DeclineActionPerformed(evt);
+            }
+        });
 
         logOut.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
         logOut.setText("Log Off");
@@ -126,26 +196,22 @@ public String clientName = null;
 
         Chat.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
         Chat.setText("Chat");
-
-        friendList.addActionListener(new java.awt.event.ActionListener() {
+        Chat.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                friendListActionPerformed(evt);
+                ChatActionPerformed(evt);
             }
         });
 
-        musicBtn.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
-        musicBtn.setText("Music");
-        musicBtn.addActionListener(new java.awt.event.ActionListener() {
+        songList.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                musicBtnActionPerformed(evt);
+                songListActionPerformed(evt);
             }
         });
 
-        jButton3.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
-        jButton3.setText("Profile");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        Refresh.setText("Refresh");
+        Refresh.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                RefreshActionPerformed(evt);
             }
         });
 
@@ -157,95 +223,114 @@ public String clientName = null;
                 .addGap(28, 28, 28)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(39, 39, 39)
-                        .addComponent(jLabel1)
-                        .addGap(83, 83, 83)
-                        .addComponent(jLabel4)
-                        .addGap(102, 102, 102)
-                        .addComponent(jLabel5))
+                        .addComponent(Music, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(35, 35, 35)
+                        .addComponent(Profile, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(memberList, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(friendList, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)
-                            .addComponent(sendRequesst, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(15, 15, 15)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(209, 209, 209)
-                                .addComponent(songList, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(27, 27, 27)
-                                .addComponent(Chat, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(30, 30, 30)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel1)
+                                    .addComponent(FriendsList, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(40, 40, 40)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(requestList, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(32, 32, 32)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(infoList, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                                .addComponent(jLabel4)
+                                                .addGap(18, 18, 18)))
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addGroup(layout.createSequentialGroup()
+                                                        .addGap(67, 67, 67)
+                                                        .addComponent(jLabel5)
+                                                        .addGap(69, 69, 69))
+                                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                                        .addComponent(songList, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addGap(37, 37, 37)))
+                                                .addComponent(Chat, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                                .addGap(41, 41, 41)
+                                                .addComponent(Play)
+                                                .addGap(204, 204, 204))))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(23, 23, 23)
+                                        .addComponent(sendRequesst)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addComponent(jLabel3)
+                                            .addComponent(requestList, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(Accept)
-                                            .addComponent(Decline)))
+                                            .addComponent(Decline))))
+                                .addGap(0, 171, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(memberList, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(infoList, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(86, 86, 86)
-                                        .addComponent(Play)))))))
-                .addGap(0, 35, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(43, 43, 43)
-                .addComponent(musicBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 283, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(11, 24, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(43, 43, 43)
-                .addComponent(jLabel2)
-                .addGap(68, 68, 68)
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(logOut))
+                                        .addGap(43, 43, 43)
+                                        .addComponent(jLabel2)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(Refresh, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(logOut, javax.swing.GroupLayout.Alignment.TRAILING))))))
+                .addGap(0, 11, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(23, 23, 23)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(logOut)
-                            .addComponent(jLabel2)
                             .addComponent(jLabel3))
-                        .addGap(18, 18, 18)
-                        .addComponent(Accept)
-                        .addGap(18, 18, 18)
-                        .addComponent(Decline))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(requestList, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(Accept)
+                                .addGap(28, 28, 28)
+                                .addComponent(Decline)
+                                .addGap(56, 56, 56)
+                                .addComponent(Refresh))))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(31, 31, 31)
+                        .addGap(38, 38, 38)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(memberList, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(requestList, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(sendRequesst, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel1)
-                                .addComponent(jLabel4)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(friendList, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
-                                .addComponent(infoList, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(Chat)
-                                .addGap(88, 88, 88))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(songList, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(Play)))
-                .addGap(44, 44, 44)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(45, 45, 45)
+                                .addComponent(sendRequesst, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton3)
-                    .addComponent(musicBtn))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(songList, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Play)
+                        .addGap(13, 13, 13))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                    .addComponent(Chat)
+                                    .addGap(99, 99, 99))
+                                .addComponent(infoList, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(FriendsList, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(30, 30, 30)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(Music)
+                    .addComponent(Profile))
                 .addContainerGap())
         );
 
@@ -253,29 +338,114 @@ public String clientName = null;
     }// </editor-fold>//GEN-END:initComponents
 
     private void sendRequesstActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendRequesstActionPerformed
-
+        // TODO add your handling code here:
+        //Get selected Member's Profile
+        Member M = talker.getUser(memberList.getSelectedItem());
+        
+        if(M != null){
+            M.friendsRequests.add(clientName);
+            //Commits changes to the database
+            talker.UpdateDatabase(M);
+        }
+        else{
+           //Error Message!!
+        JOptionPane.showMessageDialog(new JPanel(), "Error", "User not selected", JOptionPane.ERROR_MESSAGE);
+         
+        }
+        
+        
     }//GEN-LAST:event_sendRequesstActionPerformed
 
+    private void MusicActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MusicActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+        new Music().setVisible(true);
+    }//GEN-LAST:event_MusicActionPerformed
+
     private void logOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logOutActionPerformed
+
+        Member M = talker.getUser(clientName);
+        talker.signOut(M);
         this.dispose();
         new UI().setVisible(true);
     }//GEN-LAST:event_logOutActionPerformed
 
-    private void friendListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_friendListActionPerformed
+    private void ChatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ChatActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_friendListActionPerformed
+        if(FriendsList.getSelectedIndex() != -1)
+        {
+            Chat newChat = new Chat(clientName, FriendsList.getSelectedItem());
+            newChat.setVisible(true); 
+        }
+        else
+        {
+            //Error Message!!
+            JOptionPane.showMessageDialog(new JPanel(), "Error", "User not selected", JOptionPane.ERROR_MESSAGE);
+        }
+        
+        
+    }//GEN-LAST:event_ChatActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void songListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_songListActionPerformed
         // TODO add your handling code here:
-        this.dispose();
-        new Profile().setVisible(true);
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_songListActionPerformed
 
-    private void musicBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_musicBtnActionPerformed
+    private void AcceptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AcceptActionPerformed
         // TODO add your handling code here:
-        this.dispose();
-        new Music(clientName).setVisible(true);
-    }//GEN-LAST:event_musicBtnActionPerformed
+        //Selected User
+        String SelectedUser = requestList.getSelectedItem();   
+        //Getting both profiles
+        Member M = talker.getUser(clientName);
+        Member OtherUser = talker.getUser(SelectedUser);
+        
+        if(SelectedUser != null){
+            //Add user to friends list for client
+            M.friends.add(SelectedUser); 
+            
+            //For other user            
+            OtherUser.friends.add(clientName);
+        
+            //Remove User from friendsRequest list
+            M.friendsRequests.remove(SelectedUser);
+            
+            //Commits changes to the database
+            talker.UpdateDatabase(M);
+            talker.UpdateDatabase(OtherUser);
+        }
+        else{
+           //Error Message!!
+        JOptionPane.showMessageDialog(new JPanel(), "Error", "User not selected", JOptionPane.ERROR_MESSAGE);
+         
+        }
+        
+    }//GEN-LAST:event_AcceptActionPerformed
+
+    private void DeclineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DeclineActionPerformed
+        // TODO add your handling code here:
+        Member M = talker.getUser(clientName);
+        
+        if(FriendsList.getSelectedIndex() != -1){
+            //Remove User from friendRequest list
+            M.friendsRequests.remove(requestList.getSelectedItem());
+            //Commits changes to the database
+            talker.UpdateDatabase(M);
+        }
+        else{
+           //Error Message!!
+        JOptionPane.showMessageDialog(new JPanel(), "Error", "User not selected", JOptionPane.ERROR_MESSAGE);
+         
+        }
+        
+    }//GEN-LAST:event_DeclineActionPerformed
+
+    private void RefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefreshActionPerformed
+        // TODO add your handling code here:
+        updateGUI();
+    }//GEN-LAST:event_RefreshActionPerformed
+
+    private void ProfileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ProfileActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ProfileActionPerformed
 
     /**
      * @param args the command line arguments
@@ -316,10 +486,12 @@ public String clientName = null;
     private javax.swing.JButton Accept;
     private javax.swing.JButton Chat;
     private javax.swing.JButton Decline;
+    private java.awt.List FriendsList;
+    private javax.swing.JButton Music;
     private javax.swing.JButton Play;
-    private java.awt.List friendList;
+    private javax.swing.JButton Profile;
+    private javax.swing.JButton Refresh;
     private java.awt.List infoList;
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -327,7 +499,6 @@ public String clientName = null;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JButton logOut;
     private java.awt.List memberList;
-    private javax.swing.JButton musicBtn;
     private java.awt.List requestList;
     private javax.swing.JButton sendRequesst;
     private java.awt.List songList;

@@ -23,6 +23,7 @@ import java.util.ArrayList;
  */
 public class SocketCommunicator 
 {
+
 //Music Network Server
     public void signUp(Member member) {
         
@@ -31,14 +32,34 @@ public class SocketCommunicator
             
             ObjectOutputStream OutputStream = new ObjectOutputStream(serverConnection.getOutputStream());
             OutputStream.writeObject(member);
+            
+            //Registering to Chat Server
+            Register(member.userName);
+            
+            serverConnection.close();
         }
         catch(Exception e){
             System.out.println(e.getMessage());
         }
     }
     
+    public void UpdateDatabase(Member member)
+    {
+        //same as signUp function accept it doesnt register them again
+        try{
+            Socket serverConnection = new Socket("localhost",2222);
+            
+            ObjectOutputStream OutputStream = new ObjectOutputStream(serverConnection.getOutputStream());
+            OutputStream.writeObject(member);
+                        
+            serverConnection.close();
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
     
-    
+
     public Member getUser(String username){
         Member returnMember = null;
     try{
@@ -49,6 +70,7 @@ public class SocketCommunicator
             
             ObjectInputStream in = new ObjectInputStream(serverConnection.getInputStream());
             returnMember = (Member)in.readObject();
+            serverConnection.close();
             return returnMember;
         }
         catch(Exception e){
@@ -56,12 +78,7 @@ public class SocketCommunicator
             return returnMember;
         }
     }
-            //send song thing that takes path and name
-   // make new file with path 
-     //make byte array from that file Files.readAllBytes(myfile.toPath());
-     //writeObject(byteArray)
-     //
-    
+
     void sendSong(String fileLocal,String fileName, String clientName){
         
         try{
@@ -85,7 +102,7 @@ public class SocketCommunicator
            
             };
     }
-    
+            
      public ArrayList<Member> onlinePepes(){
          ArrayList<Member> returnArray = new ArrayList<>();
          try{
@@ -97,6 +114,7 @@ public class SocketCommunicator
             ObjectInputStream In = new ObjectInputStream(serverConnection.getInputStream());
             returnArray = (ArrayList<Member>)In.readObject();
             
+            serverConnection.close();
             return returnArray;
          }
          catch
@@ -105,18 +123,35 @@ public class SocketCommunicator
              return returnArray;
          }
      }
+    
 
-     
-    public void singOut (Member member){
+    public void signOut (Member member){
         try{
             Socket serverConnection = new Socket("localhost",3333);
             
             ObjectOutputStream OutputStream = new ObjectOutputStream(serverConnection.getOutputStream());
             OutputStream.writeObject(member);
             
+            //Unregistering Member from Chat Server
+            unRegister(member.userName);
+            
+            serverConnection.close();
             
         }
         catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
+    
+    public void writeToConsole(){
+        try{
+            Socket s = new Socket("localhost",5555);
+            ObjectOutputStream stream = new ObjectOutputStream(s.getOutputStream());
+            
+            stream.writeObject(new String("hey"));
+            
+            s.close();
+        }catch(Exception e){
             System.out.println(e.getMessage());
         }
     }
@@ -127,27 +162,17 @@ public class SocketCommunicator
     }
     public void postReceive(){
     }
+    public void songSend(){
+    }
+    public void songReceive(){
+    }
+    
 
-    
-        public void writeToConsole(){
-        try{
-            Socket s = new Socket("localhost",5555);
-            ObjectOutputStream stream = new ObjectOutputStream(s.getOutputStream());
-            
-            stream.writeObject(new String("hey"));
-        }catch(Exception e){
-            System.out.println(e.getMessage());
-        }
-    }
-    
-//Chat Server    
-    public void acceptChat()
-    {
-        
-    }
-            
+
+//Chat Server                
     public void sendingMessage(String message, String Sender, String Receiver)
     {
+        //Send message object to the server
         try{
             
             Socket S = new Socket("localhost", 1000);
@@ -158,14 +183,68 @@ public class SocketCommunicator
             MessageToSend.Sender = Sender;
             
             OOS.writeObject(MessageToSend);
+            
+            S.close();
         
         }catch(Exception E){
             System.out.println("Network Error:" + E.getMessage());
         }
         
     }
-
     
-   
-              
+    public void Register(String Username)
+    {
+        //Send username to the server for registration
+        try{
+            Socket S = new Socket("localhost", 1010);
+            DataOutputStream DOS = new DataOutputStream(S.getOutputStream());
+            
+            DOS.writeUTF(Username);
+            
+            S.close();
+        }catch(Exception E){
+            System.out.println("Network Error:" + E.getMessage());
+        }
+        
+    }
+    
+    public void unRegister(String Username)
+    {
+        //Send username to the server for unregistration
+        try{
+            Socket S = new Socket("localhost", 1030);
+            DataOutputStream DOS = new DataOutputStream(S.getOutputStream());
+            
+            DOS.writeUTF(Username);
+            
+            S.close();
+        }catch(Exception E){
+            System.out.println("Network Error:" + E.getMessage());
+        }
+    }
+    
+    public Message receiveMessage(String Username)
+    {
+        //User receives message that show its contents and sender
+        //Send username to server to check if theres any messages for them
+        try{
+            //Send username to server
+            Socket S = new Socket("localhost", 1020);
+            DataOutputStream DOS = new DataOutputStream(S.getOutputStream());            
+            DOS.writeUTF(Username);
+            
+            //receiver message
+            ObjectInputStream OIS = new ObjectInputStream(S.getInputStream());
+            Message M = (Message)OIS.readObject();
+            
+            S.close();
+            return M;
+            
+        }catch(Exception E){
+            System.out.println("Network Error:" + E.getMessage());
+        }
+        return null;
+    }
+        
+    
 }

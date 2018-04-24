@@ -25,8 +25,6 @@ import sun.audio.AudioStream;
 public class Music extends javax.swing.JFrame {
   SocketCommunicator communicator = new SocketCommunicator();
   public String clientName = null;
-
-  
   
     /**
      * Creates new form Music
@@ -36,6 +34,7 @@ public class Music extends javax.swing.JFrame {
     }
     public Music(String username) {
         initComponents();
+        setTitle("Current Account: " + username);
         clientName = username;
     }
     
@@ -70,8 +69,8 @@ public class Music extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        MusicBtn = new javax.swing.JButton();
+        ProfileBtn = new javax.swing.JButton();
         playBtn = new javax.swing.JButton();
         Uploadbtn = new javax.swing.JButton();
         postList = new java.awt.List();
@@ -83,14 +82,14 @@ public class Music extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton2.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
-        jButton2.setText("Music");
+        MusicBtn.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
+        MusicBtn.setText("Music");
 
-        jButton3.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
-        jButton3.setText("Profile");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        ProfileBtn.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
+        ProfileBtn.setText("Profile");
+        ProfileBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                ProfileBtnActionPerformed(evt);
             }
         });
 
@@ -125,9 +124,9 @@ public class Music extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(28, 28, 28)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 283, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(MusicBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 283, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(48, 48, 48)
-                .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(ProfileBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
                 .addGap(80, 80, 80)
@@ -174,19 +173,19 @@ public class Music extends javax.swing.JFrame {
                         .addComponent(postBtn)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 67, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton3)
-                    .addComponent(jButton2))
+                    .addComponent(ProfileBtn)
+                    .addComponent(MusicBtn))
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void ProfileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ProfileBtnActionPerformed
         // TODO add your handling code here:
         this.dispose();
-        new Profile().setVisible(true);
-    }//GEN-LAST:event_jButton3ActionPerformed
+        new Profile(clientName).setVisible(true);
+    }//GEN-LAST:event_ProfileBtnActionPerformed
 
     private void UploadbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UploadbtnActionPerformed
         // TODO add your handling code here:
@@ -247,9 +246,9 @@ public class Music extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton MusicBtn;
+    private javax.swing.JButton ProfileBtn;
     private javax.swing.JButton Uploadbtn;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private java.awt.List musicList;

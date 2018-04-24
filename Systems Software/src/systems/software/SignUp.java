@@ -5,13 +5,7 @@
  */
 package systems.software;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileNotFoundException;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Date;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
@@ -418,10 +412,10 @@ public class SignUp extends javax.swing.JFrame {
         new SocketCommunicator().signUp(newHomie);
         
         JOptionPane.showMessageDialog(new JPanel(), "Profile Created!", "Info", JOptionPane.INFORMATION_MESSAGE);
-                
         
+                        
         this.dispose();
-        new Music().setVisible(true);
+        new Music(username).setVisible(true);
     }
     }//GEN-LAST:event_signUpBtnActionPerformed
 

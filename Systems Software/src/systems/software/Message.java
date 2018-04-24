@@ -5,11 +5,14 @@
  */
 package systems.software;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Sam King
  */
-public class Message {
+public class Message implements Serializable 
+{
     public String Contents;
     public String Sender;
     public String Receiver;    
