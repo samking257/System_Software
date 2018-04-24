@@ -29,7 +29,7 @@ import systems.software.Songs;
 public class MusicNetworkgui extends javax.swing.JFrame {
 
     //globals
-    final private ArrayList<Member> member = new ArrayList<>();
+    private ArrayList<Member> member = new ArrayList<>();
     final private ArrayList<Posts> posts = new ArrayList<>();
     final private ArrayList<songs> allSongs = new ArrayList<>();
     
@@ -44,6 +44,8 @@ public class MusicNetworkgui extends javax.swing.JFrame {
     void Begin(){
         new Thread (this::signUp).start();
         
+        new Thread (this::signOut).start();
+        
         new Thread (this::postSend).start();
         
         new Thread(this::readUser).start();
@@ -56,33 +58,63 @@ public class MusicNetworkgui extends javax.swing.JFrame {
         
         new Thread (this::songSend).start();
         
-        new Thread (this::songSend).start();
+        new Thread (this::songReceive).start();
         
         new Thread (this::onlinePepes).start();
-        
-                new Thread (this::songReceive).start();
+                
     }
-
     
     //doanload song(songname, byte[] data]
     //FileOuputStream songwriter = new FileOutputStream("music/"+songname)
-    
-    
-    
+
     private void signUp() {
         while(true){
         try{
             ServerSocket socket = new ServerSocket(2222);
             Socket client = socket.accept();
-            
+            //receive and read member
             ObjectInputStream inputStream = new ObjectInputStream(client.getInputStream());
             Member receiveMember = (Member)inputStream.readObject();
+            //read database array from file
+            ObjectInputStream is = new ObjectInputStream(new FileInputStream("UserDatabase/members.txt"));
+            ArrayList<Member> database = (ArrayList<Member>)is.readObject();
+                            
+            //add to list of online members
+            boolean added = false;
+            //loop through member list
+            for(int x = 0; x < member.size(); x++)
+            {
+                //if member is already in the list then update info by
+                //replacing the whole member with new member
+                if(receiveMember.userName.equals(member.get(x).userName)){
+                    member.set(x, receiveMember);
+                    added = true;
+                    break;
+                }
+            }
+            //if member isnt already in the list then add them in
+            if(!added){
+                member.add(receiveMember);
+            }
             
-            member.add(receiveMember);
-            
-            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("UserDatabase/" + receiveMember.userName + ".txt"));
-            out.writeObject(receiveMember);
-                   socket.close();  
+            //add account to database
+            added = false;
+            for(int x = 0; x < database.size(); x++)
+            {
+                //set member array to database array
+                if(receiveMember.userName.equals(database.get(x).userName)){
+                    database.set(x, receiveMember);
+                    added = true;
+                    break;
+                }
+            }
+            if(!added){
+                database.add(receiveMember);
+            }
+            //save database to text file
+            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("UserDatabase/members.txt"));
+            out.writeObject(database);
+            socket.close();  
         }
         catch(Exception e){
             System.out.println(e.getMessage());
@@ -90,7 +122,6 @@ public class MusicNetworkgui extends javax.swing.JFrame {
                 
         }
     }
-    
     
     private void signOut() {
         while(true){
@@ -110,6 +141,7 @@ public class MusicNetworkgui extends javax.swing.JFrame {
                 
         }
     }
+    
     public void readUser(){
         while (true){
             try{
@@ -119,33 +151,23 @@ public class MusicNetworkgui extends javax.swing.JFrame {
             ObjectInputStream getUsername = new ObjectInputStream(client.getInputStream());
             String Username = (String)getUsername.readObject();
             
-            ObjectInputStream is = new ObjectInputStream(new FileInputStream("UserDatabase/" + Username + ".txt"));
-            Member M = (Member)is.readObject();
+            ObjectInputStream is = new ObjectInputStream(new FileInputStream("UserDatabase/members.txt"));
+            ArrayList<Member> Database = new ArrayList<>();
+            Database = (ArrayList<Member>)is.readObject();
             
-            ObjectOutputStream os = new ObjectOutputStream(client.getOutputStream());
-            os.writeObject(M);
-            
+            for(Member person: Database){
+                if(person.userName.equals(Username)){
+                    ObjectOutputStream os = new ObjectOutputStream(client.getOutputStream());
+                    os.writeObject(person);
+                }
+            }
+                       
             socket.close();
             }catch (Exception e){
             System.out.println(e.getMessage());
             }
         }
         
-    }
-    
-    public Member sendUser(){
-        while(true){
-        try{
-            ServerSocket socket = new ServerSocket(5555);
-            Socket client = socket.accept();
-            
-            socket.close();
-        }
-        catch(Exception e){
-            System.out.println(e.getMessage());
-        }
-                
-        }
     }
     
     private void onlinePepes(){
@@ -167,7 +189,23 @@ public class MusicNetworkgui extends javax.swing.JFrame {
                 
         }
     }
-    private void songReceive(){
+    
+    public Member sendUser(){
+        while(true){
+        try{
+            ServerSocket socket = new ServerSocket(5555);
+            Socket client = socket.accept();
+            
+            socket.close();
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+                
+        }
+    }
+    
+      private void songReceive(){
         while(true){
         try{
             ServerSocket socket = new ServerSocket(6969);
@@ -201,7 +239,6 @@ public class MusicNetworkgui extends javax.swing.JFrame {
                 
         }
     }
-
     
     private void postSend(){
     }
@@ -213,7 +250,7 @@ public class MusicNetworkgui extends javax.swing.JFrame {
     }
     private void songSend(){
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -240,7 +277,7 @@ public class MusicNetworkgui extends javax.swing.JFrame {
         onlinePeeps.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
-        jLabel1.setText("Online:");
+        jLabel1.setText("Online pepes:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -254,7 +291,7 @@ public class MusicNetworkgui extends javax.swing.JFrame {
                         .addGap(29, 29, 29)
                         .addComponent(Refresh, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(96, 96, 96)
+                        .addGap(65, 65, 65)
                         .addComponent(jLabel1)))
                 .addContainerGap(30, Short.MAX_VALUE))
         );
