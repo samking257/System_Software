@@ -1,0 +1,257 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package clientserver;
+
+import java.io.DataInputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+import systems.software.Message;
+
+/**
+ *
+ * @author Sam King
+ */
+public class ChatServer extends javax.swing.JFrame 
+{
+           
+    ArrayList<String> list = new ArrayList();
+    ArrayList<Message> Messagelist = new ArrayList();
+    
+        void Register()
+    {
+        //List of all members online
+        //User logs in and sends username to the server
+        while(true)
+        {
+            try{
+                //create new server socket
+                ServerSocket SS = new ServerSocket(1010);
+                //Keep checking for message
+                Socket reg = SS.accept();
+                DataInputStream DIS = new DataInputStream(reg.getInputStream());
+                String UserToReg = DIS.readUTF();
+                
+                //Adding username to the register list
+                list.add(UserToReg);
+                
+                SS.close();                         
+            }catch(Exception E){
+            System.out.println("Network Error:" + E.getMessage());
+            }
+        }
+    }
+    
+    public void unRegister()
+    {
+        //When user signs out they send their username to the server
+        //username is then removed from the lists
+        try{
+            //create new server socket
+            ServerSocket SS = new ServerSocket(1030);
+            //Keep checking for message
+            Socket reg = SS.accept();
+            DataInputStream DIS = new DataInputStream(reg.getInputStream());
+            String UserUnReg = DIS.readUTF();
+            
+            //Removing username from register list
+            list.remove(UserUnReg);
+            SS.close();
+        }catch(Exception E){
+            System.out.println("Network Error:" + E.getMessage());
+        }
+    }
+    
+    void ReceiveMessage()
+    {   
+        //Message is sent from user to server 
+        //Message is receiced, read and put into a list
+        while(true){
+            try{
+                //create new server socket
+                ServerSocket SS = new ServerSocket(1000);
+                //Keep checking for message
+                Socket Chat = SS.accept();
+                
+                //Input Object
+                ObjectInputStream OIS = new ObjectInputStream(Chat.getInputStream()); 
+                //Read Object as Message
+                Message MessageSending = (Message)OIS.readObject();
+                
+                //Add to message array list
+                Messagelist.add(MessageSending);
+                
+                SS.close();                                           
+            }catch(Exception E){
+                System.out.println("Network Error:" + E.getMessage());
+            }            
+        }    
+    }
+    
+    void sendMessage()
+    {
+        //User will send username to the server
+        //Checks if the user has a message the sends message
+        while(true){
+            try{
+                //Create new Server Socket
+                ServerSocket ss = new ServerSocket(1020);
+                Socket s = ss.accept();                             
+                DataInputStream DIS = new DataInputStream(s.getInputStream());
+                String username = DIS.readUTF();
+                
+                Message messageToSend = null;
+                
+                //Loop through messagelist array if username=Receiver send message
+                for(Message M:Messagelist)
+                {
+                    if(username.equals(M.Receiver))
+                    {
+                        messageToSend = M;
+                        Messagelist.remove(M);
+                        break;
+                    } 
+                }
+                
+                ObjectOutputStream OOS = new ObjectOutputStream(s.getOutputStream());
+                OOS.writeObject(messageToSend);
+                
+                ss.close();
+
+            }catch(Exception E){
+                System.out.println("Network Error:" + E.getMessage());
+            }
+         }
+    }
+    
+    public ChatServer() 
+    {
+        initComponents(); 
+        start();
+    }
+    
+    void start(){
+        new Thread (this::Register).start();
+        
+        new Thread (this::unRegister).start();
+        
+        new Thread (this::ReceiveMessage).start();
+        
+        new Thread (this::sendMessage).start();
+        
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        Members_Online = new javax.swing.JLabel();
+        Register_List = new java.awt.List();
+        jButton1 = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        Members_Online.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
+        Members_Online.setText("Members Online");
+
+        jButton1.setFont(new java.awt.Font("Georgia Pro Black", 0, 18)); // NOI18N
+        jButton1.setText("Refresh");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(71, 71, 71)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(Members_Online)
+                    .addComponent(Register_List, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(226, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton1)
+                .addGap(56, 56, 56))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(43, 43, 43)
+                .addComponent(Members_Online)
+                .addGap(25, 25, 25)
+                .addComponent(Register_List, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(31, 31, 31)
+                .addComponent(jButton1)
+                .addContainerGap(51, Short.MAX_VALUE))
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+       
+        Register_List.removeAll();
+        
+        for(String User:list)
+        {
+            Register_List.add(User);
+        }      
+        
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(ChatServer.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(ChatServer.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(ChatServer.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(ChatServer.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new ChatServer().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel Members_Online;
+    private java.awt.List Register_List;
+    private javax.swing.JButton jButton1;
+    // End of variables declaration//GEN-END:variables
+}
