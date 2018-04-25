@@ -6,10 +6,13 @@
 package systems.software;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
@@ -96,7 +99,7 @@ public class SocketCommunicator
                     os.write(byteArray,0,byteArray.length); //create the actual byte array
                     
                     os.flush(); //empty os
-                    
+                    serverConnection.close();
             }catch(Exception e){
                  System.out.println(e.getMessage());
            
@@ -156,16 +159,50 @@ public class SocketCommunicator
         }
     }
     
-    public void logIn(){  
+    public void recieveSong(String songName){
+        try{
+            Socket s = new Socket("localhost",9999);
+            ObjectOutputStream stream = new ObjectOutputStream(s.getOutputStream());
+            stream.writeObject(songName);
+            
+            InputStream in = s.getInputStream();
+            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("music/" + songName));
+            
+            byte[] bArray = new byte[2000];
+            int counter;
+            while((counter = in.read(bArray)) > 0){
+                bos.write(bArray,0,counter);
+            }
+            bos.close();
+            s.close();
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+       
     }
+    
+    ArrayList<Songs> getAllSongs() {
+        ArrayList<Songs> returnArray = new ArrayList<>();
+        
+        try{
+            Socket s = new Socket("localhost",8888);
+            ObjectInputStream stream = new ObjectInputStream(s.getInputStream());
+            
+            returnArray = (ArrayList<Songs>) stream.readObject();
+            
+            s.close();
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+        
+        return returnArray;
+    }
+    
     public void postSend(){
     }
     public void postReceive(){
     }
-    public void songSend(){
-    }
-    public void songReceive(){
-    }
+  
     
 
 
@@ -245,6 +282,8 @@ public class SocketCommunicator
         }
         return null;
     }
+
+    
         
     
 }

@@ -9,6 +9,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -23,7 +24,7 @@ import sun.audio.AudioStream;
  * @author Sam King
  */
 public class Music extends javax.swing.JFrame {
-  SocketCommunicator communicator = new SocketCommunicator();
+  private SocketCommunicator communicator = new SocketCommunicator();
   public String clientName = null;
   
     /**
@@ -36,12 +37,15 @@ public class Music extends javax.swing.JFrame {
         initComponents();
         setTitle("Current Account: " + username);
         clientName = username;
+        updateMusic();
     }
     
-    public static void playMusic(String path){
+    public static void playMusic(String songName){
+        
+        new SocketCommunicator().recieveSong(songName);
         
         try{
-            Player songPlayer = new Player(new BufferedInputStream(new FileInputStream(path)));
+            Player songPlayer = new Player(new BufferedInputStream(new FileInputStream("music/" + songName)));
                 Runnable r = new Runnable() {
              public void run() {
                  try {
@@ -58,6 +62,16 @@ public class Music extends javax.swing.JFrame {
                  System.out.println(e.getMessage());
            
             };
+    }
+    
+    private void updateMusic (){
+        musicList.removeAll();
+        ArrayList<Songs> allSongs = new ArrayList<>();
+        allSongs = communicator.getAllSongs();
+        
+        for(Songs s: allSongs){
+            musicList.add(s.songName);
+        }
     }
 
     /**
@@ -106,6 +120,12 @@ public class Music extends javax.swing.JFrame {
         Uploadbtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 UploadbtnActionPerformed(evt);
+            }
+        });
+
+        musicList.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                musicListActionPerformed(evt);
             }
         });
 
@@ -207,8 +227,16 @@ public class Music extends javax.swing.JFrame {
     private void playBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playBtnActionPerformed
         // TODO add your handling code here:
 
-        playMusic("hello.mp3");
+        if(musicList.getSelectedIndex() != -1){
+            
+            playMusic(musicList.getSelectedItem());
+        }
+        
     }//GEN-LAST:event_playBtnActionPerformed
+
+    private void musicListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_musicListActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_musicListActionPerformed
 
     /**
      * @param args the command line arguments

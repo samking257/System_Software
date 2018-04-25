@@ -5,10 +5,14 @@
  */
 package systems.software;
 
+import java.io.Serializable;
+
 /**
  *
  * @author LiamF
  */
-public class Songs {
+public class Songs implements Serializable {
+    public String user;
+    public String songName;
     
 }
