@@ -5,6 +5,7 @@
  */
 package musicnetworkserver;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -14,13 +15,14 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import systems.software.Member;
 import systems.software.Posts;
-import systems.software.SocketCommunicator;
 import systems.software.Songs;
+
 
 /**
  *
@@ -31,7 +33,6 @@ public class MusicNetworkgui extends javax.swing.JFrame {
     //globals
     private ArrayList<Member> member = new ArrayList<>();
     final private ArrayList<Posts> posts = new ArrayList<>();
-    final private ArrayList<songs> allSongs = new ArrayList<>();
     
     
     /**
@@ -51,21 +52,63 @@ public class MusicNetworkgui extends javax.swing.JFrame {
         new Thread(this::readUser).start();
         
         new Thread (this::postReceive).start();
-        
-        new Thread (this::DBsave).start();
-        
-        new Thread (this::DBload).start();
-        
-        new Thread (this::songSend).start();
+                        
+        new Thread (this::songInfoSend).start();
         
         new Thread (this::songReceive).start();
         
         new Thread (this::onlinePepes).start();
+        new Thread (this::sendSong).start();
                 
     }
-    
-    //doanload song(songname, byte[] data]
-    //FileOuputStream songwriter = new FileOutputStream("music/"+songname)
+   private void sendSong(){
+       try{
+            ServerSocket socket = new ServerSocket(9999);
+            Socket client = socket.accept();
+            
+            //recieve request for song name
+            ObjectInputStream ois = new ObjectInputStream(client.getInputStream());
+            String requestedSongName = (String)ois.readObject();
+            
+            
+            //load all songs from txt file into array
+            ArrayList<Songs> allSongs = new ArrayList<>();
+            ObjectInputStream fileReader = new ObjectInputStream(new FileInputStream("UserDatabase/songs.txt"));
+            allSongs= (ArrayList<Songs>)fileReader.readObject();
+            
+            String songPath = null;
+            
+            for(Songs s: allSongs){
+                if(s.songName.equals(requestedSongName)){
+                    songPath = "music/" + s.songName;
+                }
+            }
+            
+            if(songPath != null){
+                 File song = new File(songPath);
+                               
+                 byte[] byteArray = new byte [(int) song.length()];
+                 
+                 //get file
+                 BufferedInputStream bis = new BufferedInputStream(new FileInputStream(song));
+                 bis.read(byteArray,0,byteArray.length);
+                 
+                 OutputStream sendingSong = client.getOutputStream();
+                 
+                 sendingSong.write(byteArray,0,byteArray.length);
+                 sendingSong.flush();
+            }else{
+                OutputStream sendingSong = client.getOutputStream();
+                sendingSong.write(null);
+            }
+           
+            
+            socket.close();
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+   }
 
     private void signUp() {
         while(true){
@@ -211,7 +254,7 @@ public class MusicNetworkgui extends javax.swing.JFrame {
             ServerSocket socket = new ServerSocket(6969);
             Socket client = socket.accept();
 
-            byte[] thebyte = new byte[9999999];//make massive []
+            byte[] thebyte = new byte[8000000];//make massive []
             InputStream is = client.getInputStream();
             DataInputStream d = new DataInputStream(is); //data input transfers
             
@@ -221,15 +264,25 @@ public class MusicNetworkgui extends javax.swing.JFrame {
             
             BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("music/"+ fileName)); //puts file in buffer again
          int count;
-         while((count = client.getInputStream().read(thebyte))>0){
-             bos.write(thebyte,0,count);
-             socket.close();
-            
+         while((count = client.getInputStream().read(thebyte))>1000){
+             bos.write(thebyte,0,count);            
          }
-         songs s = new songs();
-         s.Uploader = Uname;
-         s.songPath = fileName;
+         
+         //load all songs from txt file into array
+         
+         ArrayList<Songs> allSongs = new ArrayList<>();
+         ObjectInputStream ois = new ObjectInputStream(new FileInputStream("UserDatabase/songs.txt"));
+        allSongs = (ArrayList<Songs>)ois.readObject();
+                 
+         //add new song to array
+         Songs s = new Songs();
+         s.user = Uname;
+         s.songName = fileName;
          allSongs.add(s);
+         
+         //save array to txt file
+         ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("UserDatabase/songs.txt"));
+         oos.writeObject(allSongs);
            
             socket.close();
         }
@@ -244,11 +297,30 @@ public class MusicNetworkgui extends javax.swing.JFrame {
     }
     private void postReceive(){
     }
-    private void DBsave(){
-    }
-    private void DBload(){
-    }
-    private void songSend(){
+
+    private void songInfoSend(){
+        while(true){
+            try{
+            ServerSocket socket = new ServerSocket(8888);
+            Socket client = socket.accept();
+            
+            ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream()); 
+            
+            //load all songs from txt file into array
+            ArrayList<Songs> allSongs = new ArrayList<>();
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream("UserDatabase/songs.txt"));
+            allSongs = (ArrayList<Songs>)ois.readObject();
+            
+            oos.writeObject(allSongs);
+            
+            socket.close();
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+                
+        }
+
     }
 
     /**
