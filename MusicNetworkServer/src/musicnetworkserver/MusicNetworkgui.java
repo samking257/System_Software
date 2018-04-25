@@ -47,7 +47,7 @@ public class MusicNetworkgui extends javax.swing.JFrame {
         
         new Thread (this::signOut).start();
         
-        new Thread (this::postSend).start();
+        new Thread (this::postsSend).start();
         
         new Thread(this::readUser).start();
         
@@ -58,6 +58,7 @@ public class MusicNetworkgui extends javax.swing.JFrame {
         new Thread (this::songReceive).start();
         
         new Thread (this::onlinePepes).start();
+        
         new Thread (this::sendSong).start();
                 
     }
@@ -174,8 +175,15 @@ public class MusicNetworkgui extends javax.swing.JFrame {
             
             ObjectInputStream inputStream = new ObjectInputStream(client.getInputStream());
             Member receiveMember = (Member)inputStream.readObject();
+
+            ArrayList<Member> allMembers = new ArrayList<>();
+            for(Member m: member){
+                if(!(m.userName.equals(receiveMember.userName))){
+                    allMembers.add(m);
+                }
+            }
+            member = allMembers;
             
-            member.remove(receiveMember);
             socket.close();
         }
         catch(Exception e){
@@ -293,9 +301,40 @@ public class MusicNetworkgui extends javax.swing.JFrame {
         }
     }
     
-    private void postSend(){
+    private void postsSend(){
+        while(true){
+            try{
+            ServerSocket socket = new ServerSocket(1234);
+            Socket client = socket.accept();
+            
+            ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream()); 
+            oos.writeObject(posts);
+            
+            socket.close();
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
     }
     private void postReceive(){
+        while(true){
+            try{
+            ServerSocket socket = new ServerSocket(0001);
+            Socket client = socket.accept();
+            
+            ObjectInputStream oos = new ObjectInputStream(client.getInputStream()); 
+            Posts newPost = (Posts)oos.readObject();
+            
+            posts.add(newPost);
+            
+            socket.close();
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+                
+        }
     }
 
     private void songInfoSend(){
@@ -349,22 +388,19 @@ public class MusicNetworkgui extends javax.swing.JFrame {
         onlinePeeps.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
-        jLabel1.setText("Online pepes:");
+        jLabel1.setText("Online Members:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(38, 38, 38)
-                        .addComponent(onlinePeeps, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(29, 29, 29)
-                        .addComponent(Refresh, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(65, 65, 65)
-                        .addComponent(jLabel1)))
+                .addGap(38, 38, 38)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel1)
+                    .addComponent(onlinePeeps, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(29, 29, 29)
+                .addComponent(Refresh, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(30, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
